@@ -71,7 +71,7 @@ RUN (groupadd ci --gid=$GID -o && useradd ci --uid=$UID --gid=$GID --create-home
 # Install Rust
 #
 # Rust installation based on official rust image Dockerfile here:
-#   https://github.com/rust-lang/docker-rust/blob/master/1.56.0/bullseye/Dockerfile
+#   https://github.com/rust-lang/docker-rust/blob/master/1.56.1/bullseye/Dockerfile
 #
 # The original Rust docker image uses a script to install `rustup`, and from
 # there rustc and associated tools.
@@ -80,23 +80,23 @@ RUN (groupadd ci --gid=$GID -o && useradd ci --uid=$UID --gid=$GID --create-home
 # picking the appropriate files off the official docker image and then installing
 # the extra tooling/targets we need.
 
- ENV RUSTUP_HOME=/usr/local/rustup \
-     CARGO_HOME=/usr/local/cargo \
-     PATH=/usr/local/cargo/bin:$PATH \
-     RUST_VERSION=1.56.1
+ENV RUSTUP_HOME=/usr/local/rustup \
+    CARGO_HOME=/usr/local/cargo \
+    PATH=/usr/local/cargo/bin:$PATH \
+    RUST_VERSION=1.56.1
 
- COPY --from=rust:1.56.1 /usr/local/rustup /usr/local/rustup
- COPY --from=rust:1.56.1 /usr/local/cargo /usr/local/cargo
- RUN set -eux \
-     rustup component add rustfmt clippy; \
-     chmod -R a+w $RUSTUP_HOME $CARGO_HOME; \
-     rustup --version; \
-     cargo --version; \
-     rustup target add i686-unknown-linux-gnu; \
-     rustup target add arm-unknown-linux-gnueabihf; \
-     rustup target add aarch64-unknown-linux-gnu; \
-     rustup target list | grep installed; \
-     rustc --version;
+COPY --from=rust:1.56.1 /usr/local/rustup /usr/local/rustup
+COPY --from=rust:1.56.1 /usr/local/cargo /usr/local/cargo
+RUN set -eux \
+    rustup component add rustfmt clippy; \
+    chmod -R a+w $RUSTUP_HOME $CARGO_HOME; \
+    rustup --version; \
+    cargo --version; \
+    rustup target add --toolchain stable-2021-11-01 i686-unknown-linux-gnu; \
+    rustup target add --toolchain stable-2021-11-01 arm-unknown-linux-gnueabihf; \
+    rustup target add --toolchain stable-2021-11-01 aarch64-unknown-linux-gnu; \
+    rustup target list | grep installed; \
+    rustc --version;
 
 # Install etcd.
 RUN (curl -L https://github.com/coreos/etcd/releases/download/v3.3.9/etcd-v3.3.9-linux-amd64.tar.gz | tar -xz && \
