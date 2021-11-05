@@ -87,14 +87,15 @@ ENV RUSTUP_HOME=/usr/local/rustup \
 
 COPY --from=rust:1.56.1 /usr/local/rustup /usr/local/rustup
 COPY --from=rust:1.56.1 /usr/local/cargo /usr/local/cargo
+
 RUN set -eux \
     rustup component add rustfmt clippy; \
     chmod -R a+w $RUSTUP_HOME $CARGO_HOME; \
     rustup --version; \
     cargo --version; \
-    rustup target add --toolchain stable-2021-11-01 i686-unknown-linux-gnu; \
-    rustup target add --toolchain stable-2021-11-01 arm-unknown-linux-gnueabihf; \
-    rustup target add --toolchain stable-2021-11-01 aarch64-unknown-linux-gnu; \
+    rustup target add i686-unknown-linux-gnu; \
+    rustup target add arm-unknown-linux-gnueabihf; \
+    rustup target add aarch64-unknown-linux-gnu; \
     rustup target list | grep installed; \
     rustc --version;
 
